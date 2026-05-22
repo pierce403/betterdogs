@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { adminDb } from '@/lib/firebaseAdmin';
+import { getAdminDb } from '@/lib/firebaseAdmin';
 
 export async function POST(req: Request) {
   const raw = await req.text();
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     const uid = session.client_reference_id || session.metadata?.uid || '';
 
     if (uid && session.mode === 'subscription' && session.subscription) {
-      await adminDb.collection('subscriptions').doc(uid).set(
+      await getAdminDb().collection('subscriptions').doc(uid).set(
         {
           stripeCustomerId: String(session.customer || ''),
           stripeSubscriptionId: String(session.subscription),
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     const uid = subscription.metadata?.uid || '';
 
     if (uid) {
-      await adminDb.collection('subscriptions').doc(uid).set(
+      await getAdminDb().collection('subscriptions').doc(uid).set(
         {
           stripeCustomerId: String(subscription.customer),
           stripeSubscriptionId: subscription.id,
