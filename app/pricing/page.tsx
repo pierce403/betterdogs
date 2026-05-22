@@ -1,0 +1,2 @@
+'use client'; import { useAuth } from '@/components/AuthProvider';
+export default function P(){const {user}=useAuth(); return <div><h1 className='text-2xl'>Pricing</h1><button className='bg-black text-white px-4 py-2' onClick={async()=>{if(!user) return alert('login'); const r=await fetch('/api/stripe/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${await user.getIdToken()}`}});const j=await r.json(); if(j.url) location.href=j.url; else alert(j.message);}}>Subscribe</button></div>}

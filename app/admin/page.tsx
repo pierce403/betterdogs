@@ -1,0 +1,1 @@
+export default function P(){return <div><h1 className='text-2xl'>Admin dashboard</h1><p>Manage all cases and assign trainerId in each case document. Use scripts/set-admin.ts to grant first admin.</p></div>}
