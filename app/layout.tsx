@@ -1,0 +1,2 @@
+import './globals.css'; import AuthProvider from '@/components/AuthProvider'; import Link from 'next/link';
+export default function RootLayout({children}:{children:React.ReactNode}){return <html><body><AuthProvider><nav className='p-4 bg-white border-b flex gap-4'><Link href='/'>BetterDogs</Link><Link href='/dashboard'>Dashboard</Link><Link href='/pricing'>Pricing</Link></nav><main className='max-w-5xl mx-auto p-4'>{children}</main></AuthProvider></body></html>}

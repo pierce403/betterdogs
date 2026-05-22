@@ -1,0 +1,1 @@
+'use client'; import { useParams } from 'next/navigation'; import Link from 'next/link'; export default function P(){const p=useParams<{dogId:string}>(); return <div><h1 className='text-2xl'>Dog {p.dogId}</h1><Link className='underline' href={`/cases/new?dogId=${p.dogId}`}>Open training case</Link></div>}

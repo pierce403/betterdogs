@@ -1,0 +1,6 @@
+import { NextResponse } from 'next/server'; import { z } from 'zod'; import { requireAuth, requireCaseAccess } from '@/lib/auth-server'; import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'; import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+const schema=z.object({caseId:z.string(),filename:z.string(),contentType:z.string(),sizeBytes:z.number()});
+export async function POST(req:Request){try{const u=await requireAuth(); const body=schema.parse(await req.json()); await requireCaseAccess(u.uid,body.caseId);
+if(!process.env.R2_ACCOUNT_ID||!process.env.R2_ACCESS_KEY_ID||!process.env.R2_SECRET_ACCESS_KEY||!process.env.R2_BUCKET_NAME) return NextResponse.json({message:'R2 not configured'},{status:400});
+const client=new S3Client({region:'auto',endpoint:`https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,credentials:{accessKeyId:process.env.R2_ACCESS_KEY_ID,secretAccessKey:process.env.R2_SECRET_ACCESS_KEY}});const r2Key=`cases/${body.caseId}/${Date.now()}-${body.filename}`;const url=await getSignedUrl(client,new PutObjectCommand({Bucket:process.env.R2_BUCKET_NAME,Key:r2Key,ContentType:body.contentType}),{expiresIn:900}); return NextResponse.json({uploadUrl:url,r2Key});
+}catch(e:any){return NextResponse.json({error:e.message||'error'},{status:400});}}

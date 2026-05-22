@@ -1,0 +1,5 @@
+import { NextResponse } from 'next/server'; import Stripe from 'stripe'; import { adminDb } from '@/lib/firebaseAdmin';
+export async function POST(req:Request){const raw=await req.text(); if(!process.env.STRIPE_SECRET_KEY) return NextResponse.json({received:true,message:'Stripe not configured'}); const stripe=new Stripe(process.env.STRIPE_SECRET_KEY); let event:Stripe.Event;
+try{event=process.env.STRIPE_WEBHOOK_SECRET?stripe.webhooks.constructEvent(raw,req.headers.get('stripe-signature')||'',process.env.STRIPE_WEBHOOK_SECRET):JSON.parse(raw);}catch{return NextResponse.json({error:'Invalid signature'},{status:400});}
+if(event.type.startsWith('customer.subscription')){const s=event.data.object as Stripe.Subscription; const uid=(s.metadata?.uid||s.client_reference_id||'') as string; if(uid) await adminDb.collection('subscriptions').doc(uid).set({stripeCustomerId:String(s.customer),stripeSubscriptionId:s.id,plan:s.items.data[0]?.price.id||'',status:s.status,currentPeriodEnd:s.current_period_end*1000,updatedAt:new Date()},{merge:true});}
+return NextResponse.json({received:true});}
