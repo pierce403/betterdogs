@@ -16,3 +16,10 @@ Set `STRIPE_SECRET_KEY`, `STRIPE_PRICE_COACH_MONTHLY`, and optional `STRIPE_WEBH
 Webhook endpoint: `/api/stripe/webhook`.
 ## Vercel
 Add all env vars in Vercel project settings. Only `NEXT_PUBLIC_*` exposed client-side.
+
+## License
+
+Original project code and documentation are licensed under the
+[Apache License 2.0](LICENSE). Third-party dependencies, source excerpts,
+assets, and other third-party material retain their respective licenses and
+copyright notices; this grant does not relicense that material.
